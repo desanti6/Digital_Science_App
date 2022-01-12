@@ -78,7 +78,7 @@ with col2:
     (df['preferred'].str.contains("vaccination",na=False))|
     (df['preferred'].str.contains("antibody"))].groupby(by="name").agg({"pubid":"count","score":"median"})
     gdf_vaccine = gdf_vaccine.rename(columns={"pubid":"Publications", "score":"Altmetrics Score"})
-    gdf_vaccine = gdf_vaccine.sort_values("Publications",ascending=False)[['Publications',"Altmetrics Score"]]
+    gdf_vaccine = gdf_vaccine.sort_values("Altmetrics Score",ascending=False)[['Publications',"Altmetrics Score"]]
     st.dataframe(gdf_vaccine.style.format({"Publications":"{:.0f}", "Altmetrics Score":"{:.1f}"}))
 
 
