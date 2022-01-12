@@ -41,13 +41,16 @@ gdf_bar = df.set_index('date').groupby(pd.Grouper(freq="M")).size()
 gdf_bar.index = gdf_bar.index.map(lambda s: s.strftime('%Y-%m'))
 
 fig_bar, ax = plt.subplots(figsize=(8,3))
-gdf_bar.plot(kind="bar", ax=ax, rot=45)
+gdf_bar.plot(kind="bar", ax=ax, rot=45, label="")
+ax.axhline(y=gdf_bar.describe()["50%"], c='r', alpha=0.5, linestyle="-.", label="mean")
 ax.set_ylabel("Number of Publications")
 ax.set_xlabel("Publication Date")
 x_ticks = ax.get_xticks()
 for i,j in enumerate(x_ticks):
     ax.annotate(gdf_bar[i],(j,gdf_bar[i]), size=10, ha="center")
 ax.get_yaxis().set_ticks([])
+ax.annotate("mean="+str(gdf_bar.describe()["50%"]),(.05, gdf_bar.describe()["50%"]*1.05), fontsize=6, c='r')
+ax.legend()
 
 # Create a organization breakdown for each research org
 gdf_orgs = df.groupby(["name","latitude","longitude","country_code","country"]).agg({"pubid":'count',"score":'max',"times_cited":"sum","recent_citations":"sum"}).sort_values(by="pubid",ascending=False).reset_index()
@@ -62,7 +65,7 @@ gdf_country.rename(columns={"pubid":"Publications","times_cited":"Times Cited","
 # Dash Board
 #####################
 
-st.title("COVID-19 Research analysis")
+st.title("COVID-19 Research Analysis")
 
 col1, col2 = st.columns(2)
 with col1:
@@ -71,23 +74,51 @@ with col1:
 st.write("This includes any publications related to the COVID-19 pandemic")
 
 with col2:
-    st.subheader("COVID-19 Research Organizations with Publications related to vaccines")
-    st.write("By comparison, these organizations have specifically published regarding vaccinations. They may have \
-        also published on other COVID-19 topics.")
-    gdf_vaccine = df[(df['preferred'].str.contains("vaccine",na=False))|
-    (df['preferred'].str.contains("vaccination",na=False))|
-    (df['preferred'].str.contains("antibody"))].groupby(by="name").agg({"pubid":"count","score":"median"})
-    gdf_vaccine = gdf_vaccine.rename(columns={"pubid":"Publications", "score":"Altmetrics Score"})
-    gdf_vaccine = gdf_vaccine.sort_values("Publications",ascending=False)[['Publications',"Altmetrics Score"]]
-    st.dataframe(gdf_vaccine.style.format({"Publications":"{:.0f}", "Altmetrics Score":"{:.1f}"}))
-
-
-st.subheader("COVID-19 Publications by Month")
-st.pyplot(fig_bar)
-st.write("Publications tend to be released in conjunction with other works.\
+    st.subheader("COVID-19 Publications by Month")
+    st.pyplot(fig_bar)
+    st.write("Publications tend to be released in conjunction with other works.\
     For brevity, books and presentations were not included in this data, as they\
         tend to be reflected by the number of publications on a given topic.")
 
+with st.expander("",expanded=True):
+    st.header("COVID-19 Vaccination Research Organizations")
+    st.subheader("COVID-19 Research Organizations with Publications related to vaccines")
+    st.write("By comparison, these organizations have specifically published regarding vaccinations. They may have \
+        also published on other COVID-19 topics.")
+    
+    # Vaccine Dataframe development
+    st.subheader("Select a metric to sort the data by")
+    selection_vac = st.selectbox("",
+    ["Publications","Altmetrics Score","Times Cited","Recent Citations"], key="select0")
+
+    df_vaccine = df[(df['preferred'].str.contains("vaccine",na=False))|
+    (df['preferred'].str.contains("vaccination",na=False))|
+    (df['preferred'].str.contains("antibody"))]
+  
+    gdf_vaccine = df_vaccine.groupby(by="name").agg({"pubid":"count","score":"max","times_cited":"mean","recent_citations":"mean"})
+    gdf_vaccine = gdf_vaccine.rename(columns={"pubid":"Publications", "score":"Altmetrics Score", "times_cited":"Times Cited","recent_citations":"Recent Citations"})
+    gdf_vaccine = gdf_vaccine.sort_values(selection_vac,ascending=False)[['Publications',"Altmetrics Score", "Times Cited","Recent Citations"]]
+    st.dataframe(gdf_vaccine.style.format({"Publications":"{:.0f}", "Altmetrics Score":"{:.1f}","Times Cited":"{:.0f}","Recent Citations":"{:.0f}"}))
+    
+    ## JOIN GDF VACCINE WTIH DF LAT AND LON ON NAME
+    # st.write(df_vaccine.groupby(by=["name","latitude","longitude"]).agg({"pubid":"count","score":"max","times_cited":"mean","recent_citations":"mean"}))
+
+    if selection_vac == "Publications":
+        st.write("Publications shows the number of publications from a country in the given dataset")
+    elif selection_vac == "Altmetrics Score":
+        st.write(f"{selection_vac} shows the highest {selection_vac} from the dataset for each country")
+        st.write("More information about Altmetrics can be found at https://www.digital-science.com/product/altmetric/")
+    else:
+        st.write(f"{selection_vac} shows the sum of {selection_vac} from the dataset for each country")
+
+    subset = gdf_orgs[['name','latitude','longitude','country',selection_vac]]
+    # Location plot of where work is being done
+    mapfig_orgs = px.scatter_geo(subset,
+                    lat='latitude', lon='longitude',hover_name="name",
+                    color='country', size=selection_vac)
+    mapfig_orgs.update_layout(height=800,width=600)
+    # mapfig_orgs.show()
+    st.plotly_chart(mapfig_orgs,use_container_width=True)
 
 # Research orgs map
 with st.expander("",expanded=True):
@@ -169,5 +200,4 @@ with st.expander("",expanded=True):
     check2 = st.checkbox("Show dataframe?")
     if check2:
         st.write(gdf_country.sort_values(by=selection, ascending=False))
-
 
