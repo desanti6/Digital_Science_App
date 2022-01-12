@@ -102,7 +102,7 @@ with st.expander("",expanded=True):
         st.write(f"{selection} shows the highest {selection} from the dataset for each country")
         st.write("More information about Altmetrics can be found at https://www.digital-science.com/product/altmetric/")
     else:
-        st.write(f"{selection} shows the sum of {selection}s from the dataset for each country")
+        st.write(f"{selection} shows the sum of {selection} from the dataset for each country")
 
     subset = gdf_orgs[['name','latitude','longitude','country',selection]]
     # Location plot of where work is being done
@@ -133,7 +133,7 @@ with st.expander("",expanded=True):
         st.write(f"{selection} shows the highest {selection} from the dataset for each country")
         st.write("More information about Altmetrics can be found at https://www.digital-science.com/product/altmetric/")
     else:
-        st.write(f"{selection} shows the sum of {selection}s from the dataset for each country")
+        st.write(f"{selection} shows the sum of {selection} from the dataset for each country")
  # Plotly commands   
     mapfig_country = go.Figure(data=go.Choropleth(
     locations=gdf_country['country_code'],
