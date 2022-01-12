@@ -1,14 +1,10 @@
 import pandas as pd
-from pandas.io.json import json_normalize
-import numpy as np
 import seaborn as sns
 import streamlit as st
 import plotly as pl
 import plotly.graph_objects as go
 import plotly.express as px
 import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
-import pydeck as pdk
 from pycountry_convert import country_alpha2_to_country_name, country_name_to_country_alpha3
 st.set_page_config(page_title=None, page_icon=None, layout="wide", initial_sidebar_state="auto", menu_items=None)
 sns.set_theme(palette="dark")
