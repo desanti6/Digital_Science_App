@@ -74,7 +74,9 @@ with col2:
     st.subheader("COVID-19 Research Organizations with Publications related to vaccines")
     st.write("By comparison, these organizations have specifically published regarding vaccinations. They may have \
         also published on other COVID-19 topics.")
-    gdf_vaccine = df[(df['preferred'].str.contains("vaccine",na=False))|(df['preferred'].str.contains("antibody"))].groupby(by="name").agg({"pubid":"count","score":"median"})
+    gdf_vaccine = df[(df['preferred'].str.contains("vaccine",na=False))|
+    (df['preferred'].str.contains("vaccination",na=False))|
+    (df['preferred'].str.contains("antibody"))].groupby(by="name").agg({"pubid":"count","score":"median"})
     gdf_vaccine = gdf_vaccine.rename(columns={"pubid":"Publications", "score":"Altmetrics Score"})
     gdf_vaccine = gdf_vaccine.sort_values("Publications",ascending=False)[['Publications',"Altmetrics Score"]]
     st.dataframe(gdf_vaccine.style.format({"Publications":"{:.0f}", "Altmetrics Score":"{:.1f}"}))
