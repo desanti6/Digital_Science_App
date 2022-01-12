@@ -50,12 +50,12 @@ for i,j in enumerate(x_ticks):
 ax.get_yaxis().set_ticks([])
 
 # Create a organization breakdown for each research org
-gdf_orgs = df.groupby(["name","latitude","longitude","country_code","country"]).agg({"pubid":'count',"score":'max',"times_cited":"max","recent_citations":"max"}).sort_values(by="pubid",ascending=False).reset_index()
+gdf_orgs = df.groupby(["name","latitude","longitude","country_code","country"]).agg({"pubid":'count',"score":'max',"times_cited":"sum","recent_citations":"sum"}).sort_values(by="pubid",ascending=False).reset_index()
 gdf_orgs.rename(columns={"pubid":"Publications","times_cited":"Times Cited","score":"Altmetrics Score","recent_citations":"Recent Citations"}, inplace=True)
 # gdf_orgs.head()
 
 # Combine and goup the data by country
-gdf_country = df.groupby(["country_code","country"]).agg({"pubid":'count',"score":'max',"times_cited":"max","recent_citations":"max"}).sort_values(by="pubid",ascending=False).reset_index()
+gdf_country = df.groupby(["country_code","country"]).agg({"pubid":'count',"score":'max',"times_cited":"sum","recent_citations":"sum"}).sort_values(by="pubid",ascending=False).reset_index()
 gdf_country.rename(columns={"pubid":"Publications","times_cited":"Times Cited","score":"Altmetrics Score","recent_citations":"Recent Citations"}, inplace=True)
 
 #####################
@@ -102,7 +102,7 @@ with st.expander("",expanded=True):
         st.write(f"{selection} shows the highest {selection} from the dataset for each country")
         st.write("More information about Altmetrics can be found at https://www.digital-science.com/product/altmetric/")
     else:
-        st.write(f"{selection} shows the maximum {selection} from the dataset for each country")
+        st.write(f"{selection} shows the sum of {selection}s from the dataset for each country")
 
     subset = gdf_orgs[['name','latitude','longitude','country',selection]]
     # Location plot of where work is being done
@@ -133,7 +133,7 @@ with st.expander("",expanded=True):
         st.write(f"{selection} shows the highest {selection} from the dataset for each country")
         st.write("More information about Altmetrics can be found at https://www.digital-science.com/product/altmetric/")
     else:
-        st.write(f"{selection} shows the maximum {selection} from the dataset for each country")
+        st.write(f"{selection} shows the sum of {selection}s from the dataset for each country")
  # Plotly commands   
     mapfig_country = go.Figure(data=go.Choropleth(
     locations=gdf_country['country_code'],
