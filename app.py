@@ -137,7 +137,7 @@ with st.expander("",expanded=True):
             equator. Geospatial analysis of where vaccines have been deployed may find these areas highly undervaccinated\
                 and further research in these locations could provide researchers with a jump start on identifying \
                     varients early.")
-    st.image(Image.open('NYT Image.png'), caption="Data on varients from https://www.nytimes.com/interactive/2021/health/coronavirus-variant-tracker.html")
+    st.image(Image.open('NYT Image.png'), caption="Data on varients from: https://www.nytimes.com/interactive/2021/health/coronavirus-variant-tracker.html")
 
     st.write("The most prominent vaccine research organizations are generally located in first world countries and are mainly \
         well known universities. The first three research organizations conducting vaccine research (when sorted by publications)\
