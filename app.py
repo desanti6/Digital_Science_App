@@ -139,9 +139,18 @@ with st.expander("",expanded=True):
                     varients early.")
     st.image(Image.open('NYT Image.png'), caption="Data on varients from https://www.nytimes.com/interactive/2021/health/coronavirus-variant-tracker.html")
 
+    st.write("The most prominent vaccine research organizations are generally located in first world countries and are mainly \
+        well known universities. The first three research organizations conducting vaccine research (when sorted by publications)\
+            are the University of Oxford, Imperial College London, and Harvard University, all three of which have well known \
+                medical schools. The rankings of most prominent research organization change slightly when utilizing the other metrics\
+                available but many of these other organizations have had limited chances to publish and probably do not have the \
+                    extensive staff and research capabilities of major medical hospitals. While it is somewhat of a self-fulfilling \
+                    prophecy to suggest, continued funding to universities with medical schools will likely yield excellent advances\
+                        in vaccine research.")
+
 st.write("The following sections can be expanded and examined to identify research organizations\
     by geographic location at a national scale or based actual location.")
-    
+
 # Research orgs map
 with st.expander("COVID-19 Research Organizations Ranked for Countries ranked by Optional Metrics",expanded=False):
     st.header("")
