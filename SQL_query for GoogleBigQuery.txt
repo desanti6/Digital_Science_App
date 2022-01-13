@@ -1,0 +1,10 @@
+SELECT t1.id AS pubid, title.preferred, year, date, journal.title, name, publisher.name,type, concepts.concept, research_orgs, 
+ metrics.times_cited, metrics.recent_citations, altmetrics.score, address.country, address.state,address.city,
+address.latitude, address.longitude, address.country_code, address.state_code
+FROM (`covid-19-dimensions-ai.data.publications` t1 CROSS JOIN unnest(t1.research_orgs) orgs_ids)
+LEFT OUTER JOIN `covid-19-dimensions-ai.data.grid` t2
+    ON orgs_ids=t2.id
+ORDER BY altmetrics.score DESC
+LIMIT 10000
+
+
